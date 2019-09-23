@@ -4,6 +4,7 @@
 def delete_sp_char (ustring: str):
 	# <editor-fold desc="特殊字符替换">
 	restring = ustring.replace('&nbsp', '')\
+		.replace('<br>', '')\
 		.replace('　', '')\
 		.replace('■', '')\
 		.replace('●', '')\
@@ -28,7 +29,8 @@ def delete_sp_char (ustring: str):
 		.replace('🐱', '')\
 		.replace('◎', '')\
 		.replace('©', '')\
-		.replace('○', '')\
+		.replace('○', '') \
+		.replace('※', '') \
 		.replace('丶', '')\
 		.replace('~*', '')\
 		.replace('━', '')\

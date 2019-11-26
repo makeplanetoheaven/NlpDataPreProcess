@@ -20,7 +20,8 @@ def read_and_write(source_file_path, target_file_path):
         with open(target_file, 'w', encoding='utf-8') as fo:
             fo.writelines(content_list)
 
-
-source_file_path = 'C:\\Users\\hasee\\Desktop\\labelset'
-target_file_path = 'C:\\Users\\hasee\\Desktop\\new_labelset'
-read_and_write(source_file_path, target_file_path)
+# <editor-fold desc="原始标签数据读取即转换">
+# source_file_path = 'C:\\Users\\hasee\\Desktop\\labelset'
+# target_file_path = 'C:\\Users\\hasee\\Desktop\\new_labelset'
+# read_and_write(source_file_path, target_file_path)
+# </editor-fold>

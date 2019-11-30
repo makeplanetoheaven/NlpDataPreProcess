@@ -1,8 +1,13 @@
 # coding=utf-8
 
-import os
 import json
+import os
+import re
+
 from replace import hp
+from replace.digitaltrans import *
+from replace.fj import *
+from replace.qb import *
 
 
 def read_and_write(source_file_path, target_file_path):
@@ -70,9 +75,31 @@ def read_and_write3(label_file_path, pinyin_dict_file):
         json.dump(pinyin_dict, fo, ensure_ascii=False, indent=2)
 
 
-# <editor-fold desc="原始标签数据读取即转换">
-# source_file_path = 'C:\\Users\\hasee\\Desktop\\labelset'
-# target_file_path = 'C:\\Users\\hasee\\Desktop\\new_labelset'
+def read_and_write4(label_file_path):
+    Punctuation = "·!！？?:\\\\｡。\"＂\-＃＄％\\%＆＇()（）＊＋，,－／/：;；＜＝＞＠［＼］\\[\\]＾＿｀`｛｜｝～｟｠｢｣､、〃《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏."
+
+    # 1.字符去除
+    file_list = os.listdir(label_file_path)
+    for file in file_list:
+        label_file = os.path.join(label_file_path, file)
+        print('processing', label_file)
+        content_list = []
+        with open(label_file, 'r', encoding='utf-8') as fo:
+            for line in fo:
+                data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
+                hanzi = hanzi.replace('[FIL]', '').replace('[SPK]', '').replace('[FIL', '').replace('FIL]', '') \
+                    .replace(' ', '').replace('\u0017', '').replace('\u0014', '').replace('\ufeff', '')
+                res = re.findall('[a-zA-Z]+', hanzi)
+                if len(res) < 1:
+                    hanzi = re.sub("[%s]+" % Punctuation, "", dig2chinese2(q2b(f2j(hanzi))))
+                    content_list.append(data_path + '\t' + pinyin + '\t' + hanzi + '\n')
+        with open(label_file, 'w', encoding='utf-8') as fo:
+            fo.writelines(content_list)
+
+
+# <editor-fold desc="原始标签数据读取及转换">
+# source_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
+# target_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\\new_labelset'
 # read_and_write(source_file_path, target_file_path)
 # </editor-fold>
 
@@ -89,7 +116,12 @@ def read_and_write3(label_file_path, pinyin_dict_file):
 # </editor-fold>
 
 # <editor-fold desc="拼音字典统计">
-label_file_path = 'C:\\Users\hasee\Desktop\labelset'
+label_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
 target_dict_file = './pinyin_dict.json'
 read_and_write3(label_file_path, target_dict_file)
+# </editor-fold>
+
+# <editor-fold desc="去除标签集中的标点符号，特殊符号，英文">
+# label_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
+# read_and_write4(label_file_path)
 # </editor-fold>

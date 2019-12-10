@@ -97,6 +97,20 @@ def read_and_write4(label_file_path):
             fo.writelines(content_list)
 
 
+def read_and_write5 (label_file_path, pinyin2char_dict):
+    file_list = os.listdir(label_file_path)
+    for file in file_list:
+        label_file = os.path.join(label_file_path, file)
+        with open(label_file, 'r', encoding='utf-8') as fo:
+            for line in fo:
+                data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
+                pinyin_list = pinyin.split(' ')
+                for i in range(len(pinyin_list)):
+                    if pinyin_list[i] in pinyin2char_dict:
+                        pinyin2char_dict[pinyin_list[i]][hanzi[i]] = 1
+                    else:
+                        pinyin2char_dict[pinyin_list[i]] = {hanzi[i]: 1}
+
 # <editor-fold desc="原始标签数据读取及转换">
 # source_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
 # target_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\\new_labelset'
@@ -116,12 +130,24 @@ def read_and_write4(label_file_path):
 # </editor-fold>
 
 # <editor-fold desc="拼音字典统计">
-label_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
-target_dict_file = './pinyin_dict.json'
-read_and_write3(label_file_path, target_dict_file)
+# label_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
+# target_dict_file = './pinyin_dict.json'
+# read_and_write3(label_file_path, target_dict_file)
 # </editor-fold>
 
 # <editor-fold desc="去除标签集中的标点符号，特殊符号，英文">
 # label_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
 # read_and_write4(label_file_path)
+# </editor-fold>
+
+# <editor-fold desc="根据标签数据得到pinyin2char_dict">
+label_file_path = 'C:\\Users\Dell\Desktop\labelset'
+pinyin2char_dict = {}
+read_and_write5(label_file_path, pinyin2char_dict)
+pinyin_list = sorted(list(pinyin2char_dict.keys()))
+new_pinyin2char_dict = {}
+for pinyin in pinyin_list:
+    new_pinyin2char_dict[pinyin] = ''.join(sorted(list(pinyin2char_dict[pinyin].keys())))
+with open('./pinyin2char_dict.json', 'w', encoding='utf-8') as fo:
+    json.dump(new_pinyin2char_dict, fo, ensure_ascii=False, indent=2)
 # </editor-fold>

@@ -97,7 +97,7 @@ def read_and_write4(label_file_path):
             fo.writelines(content_list)
 
 
-def read_and_write5 (label_file_path, pinyin2char_dict):
+def read_and_write5(label_file_path, pinyin2char_dict):
     file_list = os.listdir(label_file_path)
     for file in file_list:
         label_file = os.path.join(label_file_path, file)
@@ -110,6 +110,26 @@ def read_and_write5 (label_file_path, pinyin2char_dict):
                         pinyin2char_dict[pinyin_list[i]][hanzi[i]] = 1
                     else:
                         pinyin2char_dict[pinyin_list[i]] = {hanzi[i]: 1}
+
+
+def read_and_write6(label_file_path, n_gram):
+    file_list = os.listdir(label_file_path)
+    n_gram_freq_dict = {}
+    for file in file_list:
+        label_file = os.path.join(label_file_path, file)
+        with open(label_file, 'r', encoding='utf-8') as fo:
+            for line in fo:
+                data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
+                n_hanzi = len(hanzi)
+                for i in range(n_hanzi - n_gram + 1):
+                    gram = hanzi[i:i + n_gram]
+                    if gram in n_gram_freq_dict:
+                        n_gram_freq_dict[gram] += 1
+                    else:
+                        n_gram_freq_dict[gram] = 1
+
+    return n_gram_freq_dict
+
 
 # <editor-fold desc="原始标签数据读取及转换">
 # source_file_path = 'E:\\Jarvis项目\code\\NlpDataPreProcess\Debug\labelset'
@@ -141,13 +161,33 @@ def read_and_write5 (label_file_path, pinyin2char_dict):
 # </editor-fold>
 
 # <editor-fold desc="根据标签数据得到pinyin2char_dict">
-label_file_path = 'C:\\Users\Dell\Desktop\labelset'
-pinyin2char_dict = {}
-read_and_write5(label_file_path, pinyin2char_dict)
-pinyin_list = sorted(list(pinyin2char_dict.keys()))
-new_pinyin2char_dict = {}
-for pinyin in pinyin_list:
-    new_pinyin2char_dict[pinyin] = ''.join(sorted(list(pinyin2char_dict[pinyin].keys())))
-with open('./pinyin2char_dict.json', 'w', encoding='utf-8') as fo:
-    json.dump(new_pinyin2char_dict, fo, ensure_ascii=False, indent=2)
+# label_file_path = 'C:\\Users\Dell\Desktop\labelset'
+# pinyin2char_dict = {}
+# read_and_write5(label_file_path, pinyin2char_dict)
+# pinyin_list = sorted(list(pinyin2char_dict.keys()))
+# new_pinyin2char_dict = {}
+# for pinyin in pinyin_list:
+#     new_pinyin2char_dict[pinyin] = ''.join(sorted(list(pinyin2char_dict[pinyin].keys())))
+# with open('./pinyin2char_dict.json', 'w', encoding='utf-8') as fo:
+#     json.dump(new_pinyin2char_dict, fo, ensure_ascii=False, indent=2)
+# </editor-fold>
+
+# <editor-fold desc="根据标签数据得到n_gram_freq">
+label_file_path = 'C:\\Users\hasee\Desktop\labelset'
+freq_file_path = 'C:\\Users\hasee\Desktop\\binary_freq.txt'
+n_gram_freq_dict = read_and_write6(label_file_path, 2)
+with open(freq_file_path, 'r', encoding='utf-8') as fo:
+    for line in fo:
+        gram, freq = line.rstrip('\n').split('\t')
+        if gram in n_gram_freq_dict:
+            n_gram_freq_dict[gram] += int(freq)
+        else:
+            n_gram_freq_dict[gram] = int(freq)
+n_gram_freq_list = []
+for key in n_gram_freq_dict:
+    n_gram_freq_list.append([key, n_gram_freq_dict[key]])
+n_gram_freq_list = sorted(n_gram_freq_list, key=lambda ele: ele[1], reverse=True)
+with open(freq_file_path, 'w', encoding='utf-8') as fo:
+    for gram, freq in n_gram_freq_list:
+        fo.write(gram + '\t' + str(freq) + '\n')
 # </editor-fold>

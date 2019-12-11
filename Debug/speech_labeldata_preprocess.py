@@ -120,9 +120,12 @@ def read_and_write6(label_file_path, n_gram):
         with open(label_file, 'r', encoding='utf-8') as fo:
             for line in fo:
                 data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
-                n_hanzi = len(hanzi)
-                for i in range(n_hanzi - n_gram + 1):
-                    gram = hanzi[i:i + n_gram]
+
+                # 滑动提取
+                content_list = pinyin.split(' ')
+                n_content = len(content_list)
+                for i in range(n_content - n_gram + 1):
+                    gram = ' '.join(content_list[i:i + n_gram])
                     if gram in n_gram_freq_dict:
                         n_gram_freq_dict[gram] += 1
                     else:
@@ -173,8 +176,8 @@ def read_and_write6(label_file_path, n_gram):
 # </editor-fold>
 
 # <editor-fold desc="根据标签数据得到n_gram_freq">
-label_file_path = 'C:\\Users\hasee\Desktop\labelset'
-freq_file_path = 'C:\\Users\hasee\Desktop\\binary_freq.txt'
+label_file_path = 'C:\\Users\Dell\Desktop\labelset'
+freq_file_path = 'C:\\Users\Dell\Desktop\\binary_freq.txt'
 n_gram_freq_dict = read_and_write6(label_file_path, 2)
 with open(freq_file_path, 'r', encoding='utf-8') as fo:
     for line in fo:

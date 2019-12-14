@@ -2,12 +2,12 @@
 
 import json
 import os
-import re
 
 from replace import hp
 from replace.digitaltrans import *
 from replace.fj import *
 from replace.qb import *
+from usual_re import *
 
 
 def read_and_write(source_file_path, target_file_path):
@@ -76,8 +76,6 @@ def read_and_write3(label_file_path, pinyin_dict_file):
 
 
 def read_and_write4(label_file_path):
-    Punctuation = "·!！？?:\\\\｡。\"＂\-＃＄％\\%＆＇()（）＊＋，,－／/：;；＜＝＞＠［＼］\\[\\]＾＿｀`｛｜｝～｟｠｢｣､、〃《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏."
-
     # 1.字符去除
     file_list = os.listdir(label_file_path)
     for file in file_list:
@@ -91,7 +89,7 @@ def read_and_write4(label_file_path):
                     .replace(' ', '').replace('\u0017', '').replace('\u0014', '').replace('\ufeff', '')
                 res = re.findall('[a-zA-Z]+', hanzi)
                 if len(res) < 1:
-                    hanzi = re.sub("[%s]+" % Punctuation, "", dig2chinese2(q2b(f2j(hanzi))))
+                    hanzi = re.sub(PUNCTUATION, "", dig2chinese2(q2b(f2j(hanzi))))
                     content_list.append(data_path + '\t' + pinyin + '\t' + hanzi + '\n')
         with open(label_file, 'w', encoding='utf-8') as fo:
             fo.writelines(content_list)
@@ -119,13 +117,16 @@ def read_and_write6(label_file_path, n_gram):
         label_file = os.path.join(label_file_path, file)
         with open(label_file, 'r', encoding='utf-8') as fo:
             for line in fo:
-                data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
+                # data_path, pinyin, hanzi = line.rstrip('\n').split('\t')
+                content = line.rstrip('\n')
 
                 # 滑动提取
-                content_list = pinyin.split(' ')
+                # content_list = pinyin.split(' ')
+                content_list = content
                 n_content = len(content_list)
                 for i in range(n_content - n_gram + 1):
-                    gram = ' '.join(content_list[i:i + n_gram])
+                    # gram = ' '.join(content_list[i:i + n_gram])
+                    gram = content_list[i:i + n_gram]
                     if gram in n_gram_freq_dict:
                         n_gram_freq_dict[gram] += 1
                     else:
@@ -176,21 +177,47 @@ def read_and_write6(label_file_path, n_gram):
 # </editor-fold>
 
 # <editor-fold desc="根据标签数据得到n_gram_freq">
-label_file_path = 'C:\\Users\Dell\Desktop\labelset'
-freq_file_path = 'C:\\Users\Dell\Desktop\\binary_freq.txt'
-n_gram_freq_dict = read_and_write6(label_file_path, 2)
-with open(freq_file_path, 'r', encoding='utf-8') as fo:
+# label_file_path = 'E:\Jarvis项目\code\EntityExtraction\lm_data\\6'
+# freq_file_path = './bi_freq.txt'
+# n_gram_freq_dict = read_and_write6(label_file_path, 2)
+# with open(freq_file_path, 'r', encoding='utf-8') as fo:
+#     for line in fo:
+#         gram, freq = line.rstrip('\n').split('\t')
+#         if gram in n_gram_freq_dict:
+#             n_gram_freq_dict[gram] += int(freq)
+#         else:
+#             n_gram_freq_dict[gram] = int(freq)
+# n_gram_freq_list = []
+# for key in n_gram_freq_dict:
+#     n_gram_freq_list.append([key, n_gram_freq_dict[key]])
+# n_gram_freq_list = sorted(n_gram_freq_list, key=lambda ele: ele[1], reverse=True)
+# with open(freq_file_path, 'w', encoding='utf-8') as fo:
+#     for gram, freq in n_gram_freq_list:
+#         fo.write(gram + '\t' + str(freq) + '\n')
+# </editor-fold>
+
+# <editor-fold desc="删除不包含中文的句子，删除包含除【句号，逗号】以外的句子">
+# file_path = './bi_freq.txt'
+# content_list = []
+# with open(file_path, 'r', encoding='utf-8') as fo:
+#     for line in fo:
+#         if (PATTERN_CH.search(line[0]) and PATTERN_CH.search(line[1])) \
+#                 or (',' in line and PATTERN_CH.search(line)) \
+#                 or ('。' in line and PATTERN_CH.search(line)):
+#             content_list.append(line)
+# with open(file_path, 'w', encoding='utf-8') as fo:
+#     fo.writelines(content_list)
+# </editor-fold>
+
+# <editor-fold desc="保留只包含中文的句子，并将其转成拼音">
+file_path = './bi_freq.txt'
+target_path = './pinyin.txt'
+content_list = []
+with open(file_path, 'r', encoding='utf-8') as fo:
     for line in fo:
-        gram, freq = line.rstrip('\n').split('\t')
-        if gram in n_gram_freq_dict:
-            n_gram_freq_dict[gram] += int(freq)
-        else:
-            n_gram_freq_dict[gram] = int(freq)
-n_gram_freq_list = []
-for key in n_gram_freq_dict:
-    n_gram_freq_list.append([key, n_gram_freq_dict[key]])
-n_gram_freq_list = sorted(n_gram_freq_list, key=lambda ele: ele[1], reverse=True)
-with open(freq_file_path, 'w', encoding='utf-8') as fo:
-    for gram, freq in n_gram_freq_list:
-        fo.write(gram + '\t' + str(freq) + '\n')
+        hanzi, freq = line.rstrip('\n').split('\t')
+        if PATTERN_CH.search(hanzi[0]) and PATTERN_CH.search(hanzi[1]):
+            content_list.append(hp.h2p(hanzi) + '\t' + freq + '\n')
+with open(target_path, 'w', encoding='utf-8') as fo:
+    fo.writelines(content_list)
 # </editor-fold>

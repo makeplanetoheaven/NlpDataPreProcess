@@ -11,15 +11,13 @@ def delete_sp_char(ustring: str, is_space=False):
     restring = delete_emoji_char(ustring)
     restring = restring.replace('&nbsp', '') \
         .replace('<br>', '') \
-        .replace('\u001f', '') \
-        .replace('\u0000', '') \
-        .replace('\u0018', '') \
-        .replace('\u0014', '') \
         .replace('\t', '') \
         .replace('􊥭', '') \
         .replace('􀀁', '') \
+        .replace('◇', '') \
         .replace('●', '') \
         .replace('▼', '') \
+        .replace('Δ', '') \
         .replace('▽', '') \
         .replace('▲', '') \
         .replace('▎', '') \

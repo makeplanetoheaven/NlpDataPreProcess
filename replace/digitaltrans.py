@@ -7,42 +7,48 @@ def dig2chinese1(dig_str: str) -> str:
     :param dig_str:
     :return:
     """
-    a = int(dig_str)
-    b = len(dig_str)  # 字符串位数
+    cur_dig = int(dig_str)
+    dig_len = len(dig_str)  # 字符串位数
     number = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
     unit = ['零', '十', '百', '千', '万', '亿']
+
+    if dig_len == 1:
+        return number[cur_dig]
+
     dig_list = []  # 储存中文数字串
-    while (b > 0):
-        c = a // pow(10, b - 1)
-        if (c != 0):
-            dig_list.append(number[c])
-        if (c == 0 and len(dig_list) > 1 and dig_list[-1] != unit[0]):
-            dig_list.append(number[c])
-        d = a % pow(10, b - 1)
-        e = (b - 1) % 4
-        if (e > 0 and c != 0):
+    while dig_len > 0:
+        first_dig = cur_dig // pow(10, dig_len - 1)
+
+        # 添加数字
+        if first_dig != 0:
+            dig_list.append(number[first_dig])
+        if first_dig == 0 and len(dig_list) > 1 and dig_list[-1] != unit[0]:
+            dig_list.append(number[first_dig])
+
+        # 添加单位
+        e = (dig_len - 1) % 4
+        if (e > 0 and first_dig != 0):
             dig_list.append(unit[e])
-        f = b // 4
+        f = dig_len // 4
         if (f == 1 and e == 0 and dig_list[-1] != unit[5]):
             dig_list.append(unit[4])
         elif (f == 2 and e == 0):
             dig_list.append(unit[5])
-        a = d
-        b = b - 1
+
+        cur_dig = cur_dig % pow(10, dig_len - 1)
+        dig_len = dig_len - 1
     i = 0
+
     res = ''
-    while (i < len(dig_list)):
-        if (i == 0):
-            if (dig_list[i] == number[1] and dig_list[i + 1] == unit[1]):
+    while i < len(dig_list):
+        if i == 0:
+            if dig_list[i] == number[1] and dig_list[i + 1] == unit[1]:
                 res += dig_list[i + 1]
                 i = i + 2
-        if (i != len(dig_list) - 1 and dig_list[i] == unit[0] and (
-                                dig_list[i - 1] == unit[1] or dig_list[i - 1] == unit[2] or dig_list[i - 1] == unit[
-                        3] or dig_list[i - 1] ==
-                    unit[4]) and (dig_list[i + 1] == unit[4] or dig_list[i + 1] == unit[5])):
+        if i != len(dig_list) - 1 and dig_list[i] == unit[0] and dig_list[i - 1] in unit[:5] and dig_list[i + 1] in unit[4:]:
             res += dig_list[i + 1]
             i = i + 2
-        if (i == len(dig_list) - 1 and dig_list[i] == unit[0]):
+        if i == len(dig_list) - 1 and dig_list[i] == unit[0]:
             break
         else:
             res += dig_list[i]

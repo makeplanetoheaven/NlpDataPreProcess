@@ -63,6 +63,10 @@ def delete_sp_char(ustring: str, is_space=False):
         .replace('?。', '?') \
         .replace('！。', '！') \
         .replace('!。', '!') \
+        .replace('，。', '，') \
+        .replace(',。', ',') \
+        .replace('。,', '。') \
+        .replace('。，', '。') \
         .replace('！！！！', '！') \
         .replace('!!!!', '!') \
         # </editor-fold>

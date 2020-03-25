@@ -47,7 +47,7 @@ def delete_sp_char(ustring: str, is_space=False):
 
     # <editor-fold desc="重复字符替换">
     restring = restring.replace('~~', '') \
-        .replace('，，', '') \
+        .replace('，，', '，') \
         .replace(',,', ',') \
         .replace('""', '') \
         .replace('。。', '。') \
@@ -60,33 +60,41 @@ def delete_sp_char(ustring: str, is_space=False):
         .replace('***', '') \
         .replace('===', '') \
         .replace('？。', '？') \
+        .replace('?。', '?') \
         .replace('！。', '！') \
+        .replace('!。', '!') \
         .replace('！！！！', '！') \
+        .replace('!!!!', '!') \
         # </editor-fold>
 
     #  <editor-fold desc="出现位置错误字符替换">
     restring = restring.lstrip('”') \
         .lstrip('?') \
+        .lstrip('？') \
         .lstrip('】') \
         .lstrip(')') \
         .lstrip('）') \
         .lstrip('-') \
         .lstrip('—') \
         .lstrip('，') \
+        .lstrip(',') \
         .lstrip('…') \
         .lstrip('：') \
         .lstrip('；') \
+        .lstrip(';') \
         .lstrip('·') \
         .lstrip('」') \
         .lstrip('》') \
         .lstrip('*') \
         .lstrip('.') \
+        .lstrip('。') \
         .lstrip('=') \
         .lstrip('~') \
         .lstrip('\'') \
         .lstrip('丨') \
-        .lstrip('！')
-    # </editor-fold>
+        .lstrip('！') \
+        .lstrip('!') \
+        # </editor-fold>
 
     # <editor-fold desc="无效字符替换">
     restring = restring.replace('（）', '') \

@@ -58,7 +58,7 @@ def read_and_write2(file_path):
             read_and_write2(path)
 
 
-def clean_and_rewrite(file_name):
+def clean_and_rewrite1(file_name):
     sentence_list = []
     with open(file_name, 'r', encoding='utf-8') as fo:
         for line in fo:
@@ -69,6 +69,20 @@ def clean_and_rewrite(file_name):
     with open(file_name, 'w', encoding='utf-8') as fo:
         for sentence in sentence_list:
             fo.write(sentence)
+
+
+def clean_and_rewrite2(file_path):
+    file_list = os.listdir(file_path)
+    for i in range(0, len(file_list)):
+        file_name = os.path.join(file_path, file_list[i])
+        sentence_list = []
+        with open(file_name, 'r', encoding='utf-8') as fo:
+            for line in fo:
+                sentence_list.append(temp_delete_char(delete_sp_char(q2b(f2j(line)))).replace(' ', ',').replace('\x7f', ''))
+        with open(file_name, 'w', encoding='utf-8') as fo:
+            for sentence in sentence_list:
+                if len(sentence.replace('\n', '')) > 1:
+                    fo.write(sentence)
 
 
 def temp_delete_char(ustring):
@@ -109,23 +123,28 @@ def temp_delete_char(ustring):
 # </editor-fold>
 
 # <editor-fold desc="数据预处理">
-source_file_path = 'D:\项目\Jarvis\Core\lm_data\\'
-file_list = os.listdir(source_file_path)
-for file_name in file_list:
-    file_path = os.path.join(source_file_path, file_name)
-    txt_file_list = os.listdir(file_path)
-    for txt_file_name in txt_file_list:
-        txt_file_path = os.path.join(file_path, txt_file_name)
-        clean_and_rewrite(txt_file_path)
+# source_file_path = 'D:\项目\Jarvis\Core\lm_data\\'
+# file_list = os.listdir(source_file_path)
+# for file_name in file_list:
+#     file_path = os.path.join(source_file_path, file_name)
+#     txt_file_list = os.listdir(file_path)
+#     for txt_file_name in txt_file_list:
+#         txt_file_path = os.path.join(file_path, txt_file_name)
+#         clean_and_rewrite1(txt_file_path)
 # </editor-fold>
 
 # <editor-fold desc="语料提取">
-char_dict = {}
-extract_char_lang(char_dict, 'D:\项目\Jarvis\Core\lm_data\\')
-char_list = sorted(list(char_dict.keys()))
-new_char_dict = {}
-for i, char in enumerate(char_list):
-    new_char_dict[char] = i
-with open('./char_dict.json', 'w', encoding='utf-8') as fo:
-    json.dump(new_char_dict, fo, ensure_ascii=False, indent=2)
+# char_dict = {}
+# extract_char_lang(char_dict, 'D:\项目\Jarvis\Core\lm_data\\')
+# char_list = sorted(list(char_dict.keys()))
+# new_char_dict = {}
+# for i, char in enumerate(char_list):
+#     new_char_dict[char] = i
+# with open('./char_dict.json', 'w', encoding='utf-8') as fo:
+#     json.dump(new_char_dict, fo, ensure_ascii=False, indent=2)
+# </editor-fold>
+
+# <editor-fold desc="除语言模型外其他模型训练数据处理">
+file_path = 'D:\\项目\\Jarvis\\Core\\attitude\\'
+clean_and_rewrite2(file_path)
 # </editor-fold>

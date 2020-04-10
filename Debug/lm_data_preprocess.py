@@ -81,7 +81,7 @@ def clean_and_rewrite2(file_path):
                 sentence_list.append(temp_delete_char(delete_sp_char(q2b(f2j(line)))).replace(' ', ',').replace('\x7f', ''))
         with open(file_name, 'w', encoding='utf-8') as fo:
             for sentence in sentence_list:
-                if len(sentence.replace('\n', '')) > 4:
+                if 128 >= len(sentence.replace('\n', '')) > 4:
                     fo.write(sentence)
 
 
@@ -145,6 +145,7 @@ def temp_delete_char(ustring):
 # </editor-fold>
 
 # <editor-fold desc="除语言模型外其他模型训练数据处理">
-file_path = 'D:\\项目\\Jarvis\\Core\\news\\'
-clean_and_rewrite2(file_path)
+for i in range(1, 21):
+    file_path = 'D:\\nlpDataset\\sm_data\\' + str(i) + '\\'
+    clean_and_rewrite2(file_path)
 # </editor-fold>
